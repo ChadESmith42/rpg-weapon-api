@@ -1,5 +1,8 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WeaponApi.Api.Models.Requests;
+using WeaponApi.Api.Models.Responses;
 using WeaponApi.Application.Weapon.Commands;
 using WeaponApi.Application.Weapon.Queries;
 using WeaponApi.Domain.Weapon;

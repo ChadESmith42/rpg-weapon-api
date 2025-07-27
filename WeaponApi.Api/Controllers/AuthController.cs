@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WeaponApi.Api.Models.Requests;
+using WeaponApi.Api.Models.Responses;
 using WeaponApi.Application.Authentication;
 using WeaponApi.Application.User.Commands;
 using WeaponApi.Application.User.Queries;
@@ -196,38 +198,3 @@ public sealed class AuthController : ControllerBase
         return Ok(response);
     }
 }
-
-/// <summary>
-/// Request model for user registration.
-/// </summary>
-public sealed record RegisterUserRequest(
-    string Username,
-    string Name,
-    string Email,
-    string Password,
-    DateOnly DateOfBirth);
-
-/// <summary>
-/// Request model for user login.
-/// </summary>
-public sealed record LoginUserRequest(
-    string EmailOrUsername,
-    string Password);
-
-/// <summary>
-/// Response model for authentication operations.
-/// </summary>
-public sealed record AuthResponse(
-    string AccessToken,
-    string RefreshToken,
-    DateTime ExpiresAt,
-    UserResponse User);
-
-/// <summary>
-/// Response model for user data.
-/// </summary>
-public sealed record UserResponse(
-    Guid Id,
-    string Email,
-    string Username,
-    string Name);
