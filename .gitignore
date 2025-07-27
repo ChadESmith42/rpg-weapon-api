@@ -150,7 +150,7 @@ Migrations/
 # Additional build artifacts
 *.AssemblyInfo.cs
 !Properties/AssemblyInfo.cs
-*.AssemblyInfoInputs.cache  
+*.AssemblyInfoInputs.cache
 *.csproj.AssemblyReference.cache
 .msCoverageSourceRootsMapping*
 *.Up2Date
