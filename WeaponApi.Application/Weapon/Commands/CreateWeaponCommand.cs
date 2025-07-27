@@ -9,7 +9,7 @@ namespace WeaponApi.Application.Weapon.Commands;
 /// </summary>
 public sealed record CreateWeaponCommand(
     string Name,
-    WeaponTypeEnum Type,
+    WeaponType.WeaponTypeEnum Type,
     string Description,
     int HitPoints,
     int Damage,

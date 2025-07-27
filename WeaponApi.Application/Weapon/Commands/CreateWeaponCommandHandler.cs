@@ -198,9 +198,9 @@ public sealed class WeaponCommandValidator
             errors.Add("Weapon value cannot exceed 1,000,000");
     }
 
-    private static void ValidateWeaponType(WeaponTypeEnum type, List<string> errors)
+    private static void ValidateWeaponType(WeaponType.WeaponTypeEnum type, List<string> errors)
     {
-        if (!Enum.IsDefined(typeof(WeaponTypeEnum), type))
+        if (!Enum.IsDefined(typeof(WeaponType.WeaponTypeEnum), type))
             errors.Add("Invalid weapon type specified");
     }
 }

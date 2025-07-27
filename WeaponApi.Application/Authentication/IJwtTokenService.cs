@@ -17,7 +17,7 @@ public interface IJwtTokenService
     /// <param name="user">The authenticated user</param>
     /// <param name="roles">The user's roles</param>
     /// <returns>JWT access token as string</returns>
-    string GenerateAccessToken(User user, IReadOnlyList<Role> roles);
+    string GenerateAccessToken(Domain.User.User user, IReadOnlyList<Role> roles);
 
     /// <summary>
     /// Generates a stateless refresh token for token renewal.

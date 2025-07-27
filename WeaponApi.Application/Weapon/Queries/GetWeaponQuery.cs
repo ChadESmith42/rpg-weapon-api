@@ -73,7 +73,7 @@ public sealed record WeaponData(
             weapon.Damage,
             weapon.IsRepairable,
             weapon.Value,
-            weapon.IsDamaged()
+            weapon.HitPoints < weapon.MaxHitPoints
         );
     }
 }

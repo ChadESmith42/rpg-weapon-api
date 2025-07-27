@@ -22,7 +22,7 @@ public sealed class GetWeaponQueryHandler : IRequestHandler<GetWeaponQuery, GetW
         var validationResult = ValidateRequest(request);
         if (!validationResult.IsValid)
         {
-            return GetWeaponQueryResult.Error(validationResult.ErrorMessage);
+            return GetWeaponQueryResult.Failure(validationResult.ErrorMessage);
         }
 
         return await RetrieveWeapon(request.WeaponId);
@@ -53,7 +53,7 @@ public sealed class GetWeaponQueryHandler : IRequestHandler<GetWeaponQuery, GetW
         }
         catch (Exception ex)
         {
-            return GetWeaponQueryResult.Error($"Failed to retrieve weapon: {ex.Message}");
+            return GetWeaponQueryResult.Failure($"Failed to retrieve weapon: {ex.Message}");
         }
     }
 }
