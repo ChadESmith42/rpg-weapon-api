@@ -1,0 +1,246 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/chadsmith/repos/weapon-api/tests/WeaponApi.UnitTests/WeaponApi.UnitTests.csproj": {}
+  },
+  "projects": {
+    "/Users/chadsmith/repos/weapon-api/tests/WeaponApi.UnitTests/WeaponApi.UnitTests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/chadsmith/repos/weapon-api/tests/WeaponApi.UnitTests/WeaponApi.UnitTests.csproj",
+        "projectName": "WeaponApi.UnitTests",
+        "projectPath": "/Users/chadsmith/repos/weapon-api/tests/WeaponApi.UnitTests/WeaponApi.UnitTests.csproj",
+        "packagesPath": "/Users/chadsmith/.nuget/packages/",
+        "outputPath": "/Users/chadsmith/repos/weapon-api/tests/WeaponApi.UnitTests/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/chadsmith/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/Users/chadsmith/repos/weapon-api/WeaponApi.Application/WeaponApi.Application.csproj": {
+                "projectPath": "/Users/chadsmith/repos/weapon-api/WeaponApi.Application/WeaponApi.Application.csproj"
+              },
+              "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/WeaponApi.Domain.csproj": {
+                "projectPath": "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/WeaponApi.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[8.5.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.14.1, )"
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.20.72, )"
+            },
+            "NetArchTest.Rules": {
+              "target": "Package",
+              "version": "[1.3.2, )"
+            },
+            "Testcontainers.PostgreSql": {
+              "target": "Package",
+              "version": "[4.6.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.9.3, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.1.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/chadsmith/repos/weapon-api/WeaponApi.Application/WeaponApi.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/chadsmith/repos/weapon-api/WeaponApi.Application/WeaponApi.Application.csproj",
+        "projectName": "WeaponApi.Application",
+        "projectPath": "/Users/chadsmith/repos/weapon-api/WeaponApi.Application/WeaponApi.Application.csproj",
+        "packagesPath": "/Users/chadsmith/.nuget/packages/",
+        "outputPath": "/Users/chadsmith/repos/weapon-api/WeaponApi.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/chadsmith/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/WeaponApi.Domain.csproj": {
+                "projectPath": "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/WeaponApi.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
+            "MediatR": {
+              "target": "Package",
+              "version": "[13.0.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/WeaponApi.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/WeaponApi.Domain.csproj",
+        "projectName": "WeaponApi.Domain",
+        "projectPath": "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/WeaponApi.Domain.csproj",
+        "packagesPath": "/Users/chadsmith/.nuget/packages/",
+        "outputPath": "/Users/chadsmith/repos/weapon-api/WeaponApi.Domain/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/chadsmith/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
