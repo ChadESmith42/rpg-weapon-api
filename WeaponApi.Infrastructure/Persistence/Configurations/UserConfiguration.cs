@@ -12,8 +12,13 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        // Table configuration
-        builder.ToTable("users");
+        // Table configuration with check constraints for data integrity
+        builder.ToTable("users", t =>
+        {
+            t.HasCheckConstraint("ck_users_email_format", "email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'");
+            t.HasCheckConstraint("ck_users_username_length", "LENGTH(username) >= 3");
+            t.HasCheckConstraint("ck_users_name_length", "LENGTH(name) >= 1");
+        });
 
         // Primary key configuration
         builder.HasKey(u => u.Id);
@@ -94,10 +99,5 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasIndex(u => u.CreatedAt)
             .HasDatabaseName("ix_users_created_at");
-
-        // Check constraints for data integrity
-        builder.HasCheckConstraint("ck_users_email_format", "email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'");
-        builder.HasCheckConstraint("ck_users_username_length", "LENGTH(username) >= 3");
-        builder.HasCheckConstraint("ck_users_name_length", "LENGTH(name) >= 1");
     }
 }

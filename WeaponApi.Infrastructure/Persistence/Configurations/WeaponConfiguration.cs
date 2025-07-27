@@ -12,8 +12,15 @@ public sealed class WeaponConfiguration : IEntityTypeConfiguration<Weapon>
 {
     public void Configure(EntityTypeBuilder<Weapon> builder)
     {
-        // Table configuration
-        builder.ToTable("weapons");
+        // Table configuration with check constraints for data integrity
+        builder.ToTable("weapons", t =>
+        {
+            t.HasCheckConstraint("ck_weapons_hit_points_positive", "hit_points > 0");
+            t.HasCheckConstraint("ck_weapons_max_hit_points_positive", "max_hit_points > 0");
+            t.HasCheckConstraint("ck_weapons_damage_positive", "damage > 0");
+            t.HasCheckConstraint("ck_weapons_value_non_negative", "value >= 0");
+            t.HasCheckConstraint("ck_weapons_hit_points_max", "hit_points <= max_hit_points");
+        });
 
         // Primary key configuration
         builder.HasKey(w => w.Id);
@@ -79,12 +86,5 @@ public sealed class WeaponConfiguration : IEntityTypeConfiguration<Weapon>
 
         builder.HasIndex(w => w.Type)
             .HasDatabaseName("ix_weapons_type");
-
-        // Check constraints for data integrity
-        builder.HasCheckConstraint("ck_weapons_hit_points_positive", "hit_points > 0");
-        builder.HasCheckConstraint("ck_weapons_max_hit_points_positive", "max_hit_points > 0");
-        builder.HasCheckConstraint("ck_weapons_damage_positive", "damage > 0");
-        builder.HasCheckConstraint("ck_weapons_value_non_negative", "value >= 0");
-        builder.HasCheckConstraint("ck_weapons_hit_points_max", "hit_points <= max_hit_points");
     }
 }
