@@ -1,0 +1,77 @@
+services:
+  # PostgreSQL Database Service
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    container_name: weaponapi-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: weaponapi
+      POSTGRES_USER: weaponapi_user
+      POSTGRES_PASSWORD: Dev123!@#
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      # Persist database data
+      - postgres_data:/var/lib/postgresql/data
+      # Mount initialization scripts directory (create if needed)
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - weaponapi-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U weaponapi_user -d weaponapi"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # pgAdmin for database management (optional, for development)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: weaponapi-pgadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@weaponapi.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - weaponapi-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Placeholder for the .NET API (uncomment when ready)
+  # weaponapi:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: weaponapi-app
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8000:8080"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ConnectionStrings__DefaultConnection=Host=postgres;Database=weaponapi;Username=weaponapi_user;Password=Dev123!@#
+  #   networks:
+  #     - weaponapi-network
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+
+# Named volumes for data persistence
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+# Custom network for service communication
+networks:
+  weaponapi-network:
+    driver: bridge

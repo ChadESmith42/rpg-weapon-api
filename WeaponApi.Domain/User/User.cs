@@ -14,16 +14,18 @@ public sealed class User
     public Email Email { get; private set; }
     public UserProfile Profile { get; private set; }
     public UserSecurity Security { get; private set; }
+    public IReadOnlyList<Role> Roles { get; private set; }
     public DateTime CreatedAt { get; }
 
     public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
 
-    private User(UserId id, Email email, UserProfile profile, UserSecurity security, DateTime createdAt)
+    private User(UserId id, Email email, UserProfile profile, UserSecurity security, IReadOnlyList<Role> roles, DateTime createdAt)
     {
         Id = id;
         Email = email;
         Profile = profile;
         Security = security;
+        Roles = roles;
         CreatedAt = createdAt;
     }
 
@@ -36,17 +38,18 @@ public sealed class User
         var profile = UserProfile.Create(username, name, dateOfBirth);
         var hashedPassword = passwordHasher.HashPassword(password);
         var security = UserSecurity.Create(hashedPassword);
+        var roles = new List<Role> { Role.User }.AsReadOnly(); // Default role for new users
         var createdAt = DateTime.UtcNow;
 
-        var user = new User(id, email, profile, security, createdAt);
+        var user = new User(id, email, profile, security, roles, createdAt);
         user.AddDomainEvent(new UserRegisteredEvent(id, email));
 
         return user;
     }
 
-    public static User Create(UserId id, Email email, UserProfile profile, UserSecurity security, DateTime createdAt)
+    public static User Create(UserId id, Email email, UserProfile profile, UserSecurity security, IReadOnlyList<Role> roles, DateTime createdAt)
     {
-        return new User(id, email, profile, security, createdAt);
+        return new User(id, email, profile, security, roles, createdAt);
     }
 
     public void UpdateProfile(string username, string name, DateOnly dateOfBirth)
@@ -93,6 +96,42 @@ public sealed class User
 
         return passwordHasher.VerifyPassword(providedPassword, Security.PasswordHash);
     }
+
+    public void AssignRole(Role role)
+    {
+        if (role == null)
+            throw new ArgumentNullException(nameof(role));
+
+        if (HasRole(role))
+            return; // Role already assigned
+
+        var roles = Roles.ToList();
+        roles.Add(role);
+        Roles = roles.AsReadOnly();
+    }
+
+    public void RemoveRole(Role role)
+    {
+        if (role == null)
+            throw new ArgumentNullException(nameof(role));
+
+        if (!HasRole(role))
+            return; // Role not assigned
+
+        var roles = Roles.Where(r => r.Value != role.Value).ToList();
+        Roles = roles.AsReadOnly();
+    }
+
+    public bool HasRole(Role role)
+    {
+        if (role == null)
+            return false;
+
+        return Roles.Any(r => r.Value == role.Value);
+    }
+
+    public bool IsAdmin => HasRole(Role.Admin);
+    public bool IsApplication => HasRole(Role.Application);
 
     public void ClearDomainEvents()
     {

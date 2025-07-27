@@ -1,0 +1,37 @@
+# Use the official PostgreSQL image as the base
+FROM postgres:16-alpine
+
+# Set environment variables for PostgreSQL
+ENV POSTGRES_DB=weaponapi
+ENV POSTGRES_USER=weaponapi_user
+ENV POSTGRES_PASSWORD=Dev123!@#
+
+# Set the default port
+EXPOSE 5432
+
+# Create a directory for custom initialization scripts
+RUN mkdir -p /docker-entrypoint-initdb.d
+
+# Copy any initialization scripts (if needed)
+# COPY ./scripts/*.sql /docker-entrypoint-initdb.d/
+
+# Add custom configuration if needed
+# COPY ./postgresql.conf /etc/postgresql/postgresql.conf
+
+# Set locale to ensure proper character encoding
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+
+# Install additional tools if needed (uncomment if required)
+# RUN apk add --no-cache postgresql-contrib
+
+# Health check to verify PostgreSQL is running
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD pg_isready -U $POSTGRES_USER -d $POSTGRES_DB || exit 1
+
+# Set the data directory
+VOLUME ["/var/lib/postgresql/data"]
+
+# Default command (inherited from base image)
+# CMD ["postgres"]
