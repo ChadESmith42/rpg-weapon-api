@@ -24,9 +24,9 @@ public sealed class LoginUserCommandResult
     public string? ErrorMessage { get; }
 
     private LoginUserCommandResult(
-        bool isSuccess, 
-        Domain.User.User? user = null, 
-        IReadOnlyList<Role>? roles = null, 
+        bool isSuccess,
+        Domain.User.User? user = null,
+        IReadOnlyList<Role>? roles = null,
         string? errorMessage = null)
     {
         IsSuccess = isSuccess;
@@ -35,18 +35,18 @@ public sealed class LoginUserCommandResult
         ErrorMessage = errorMessage;
     }
 
-    public static LoginUserCommandResult Success(Domain.User.User user, IReadOnlyList<Role> roles) => 
+    public static LoginUserCommandResult Success(Domain.User.User user, IReadOnlyList<Role> roles) =>
         new(true, user, roles);
 
-    public static LoginUserCommandResult InvalidCredentials() => 
+    public static LoginUserCommandResult InvalidCredentials() =>
         new(false, errorMessage: "Invalid email/username or password");
 
-    public static LoginUserCommandResult UserNotFound() => 
+    public static LoginUserCommandResult UserNotFound() =>
         new(false, errorMessage: "User not found");
 
-    public static LoginUserCommandResult Failure(string errorMessage) => 
+    public static LoginUserCommandResult Failure(string errorMessage) =>
         new(false, errorMessage: errorMessage);
 
-    public static LoginUserCommandResult ValidationFailure(string validationError) => 
+    public static LoginUserCommandResult ValidationFailure(string validationError) =>
         new(false, errorMessage: validationError);
 }

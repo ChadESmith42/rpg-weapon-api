@@ -6,12 +6,14 @@ namespace WeaponApi.Application.User.Commands;
 /// <summary>
 /// Command to register a new user in the system.
 /// Follows MediatR CQRS pattern for user registration handling.
+/// Password confirmation is validated at API layer before reaching this command.
 /// </summary>
 public sealed record RegisterUserCommand(
     string Username,
+    string Name,
     string Email,
     string Password,
-    string ConfirmPassword
+    DateOnly DateOfBirth
 ) : IRequest<RegisterUserCommandResult>;
 
 /// <summary>
