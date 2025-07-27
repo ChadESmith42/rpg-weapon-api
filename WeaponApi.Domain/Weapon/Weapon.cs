@@ -12,6 +12,13 @@ public class Weapon
   public bool IsRepairable { get; private set; }
   public decimal Value { get; private set; }
 
+  // Private parameterless constructor for Entity Framework
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor
+  private Weapon()
+  {
+  }
+#pragma warning restore CS8618
+
   private Weapon(WeaponId id, WeaponName name, string description, int hitPoints, int damage, bool isRepairable, decimal value)
   {
     Id = id;
