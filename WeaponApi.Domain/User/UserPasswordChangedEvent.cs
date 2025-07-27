@@ -7,12 +7,20 @@ namespace WeaponApi.Domain.User;
 /// </summary>
 public sealed record UserPasswordChangedEvent : IDomainEvent
 {
-    public UserId UserId { get; }
+    public Guid EventId { get; }
     public DateTime OccurredAt { get; }
+    public string EventType { get; }
+    public int Version { get; }
+
+    public UserId UserId { get; }
 
     public UserPasswordChangedEvent(UserId userId)
     {
-        UserId = userId;
+        EventId = Guid.NewGuid();
         OccurredAt = DateTime.UtcNow;
+        EventType = nameof(UserPasswordChangedEvent);
+        Version = 1;
+
+        UserId = userId;
     }
 }
