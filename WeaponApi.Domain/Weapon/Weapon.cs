@@ -18,6 +18,7 @@ public class Weapon
     Name = name;
     Description = description;
     HitPoints = hitPoints;
+    MaxHitPoints = hitPoints; // Set MaxHitPoints to the initial hitPoints value
     Damage = damage;
     IsRepairable = isRepairable;
     Value = value;

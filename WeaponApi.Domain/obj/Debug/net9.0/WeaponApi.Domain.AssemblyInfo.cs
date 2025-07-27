@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WeaponApi.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a2eb603d842181b2ca38e3c1b0f40be56cd2a56")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c548b869702d96b0e0a32ef9cff9239447869647")]
 [assembly: System.Reflection.AssemblyProductAttribute("WeaponApi.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WeaponApi.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
