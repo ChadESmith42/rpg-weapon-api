@@ -19,6 +19,13 @@ public sealed class User
 
     public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
 
+    // Private parameterless constructor for Entity Framework
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor
+    private User()
+    {
+    }
+#pragma warning restore CS8618
+
     private User(UserId id, Email email, UserProfile profile, UserSecurity security, IReadOnlyList<Role> roles, DateTime createdAt)
     {
         Id = id;

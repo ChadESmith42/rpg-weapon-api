@@ -59,6 +59,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             profile.Property(p => p.DateOfBirth)
                 .HasColumnName("date_of_birth")
                 .IsRequired();
+
+            // Index on username within the owned entity configuration
+            profile.HasIndex(p => p.Username)
+                .IsUnique()
+                .HasDatabaseName("ix_users_username_unique");
         });
 
         // Configure UserSecurity as owned entity
@@ -75,7 +80,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         });
 
         // Configure Roles collection
-        builder.Property(u => u.Roles)
+        var rolesProperty = builder.Property(u => u.Roles)
             .HasConversion(
                 roles => string.Join(',', roles.Select(r => r.Value.ToString())),
                 value => value.Split(',', StringSplitOptions.RemoveEmptyEntries)
@@ -85,6 +90,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(500)
             .IsRequired();
 
+        rolesProperty.Metadata.SetValueComparer(new Microsoft.EntityFrameworkCore.ChangeTracking.ValueComparer<IReadOnlyList<Role>>(
+            (c1, c2) => c1!.SequenceEqual(c2!),
+            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+            c => c.ToList()));
+
         // Ignore domain events (not persisted)
         builder.Ignore(u => u.DomainEvents);
 
@@ -92,10 +102,6 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.Email)
             .IsUnique()
             .HasDatabaseName("ix_users_email_unique");
-
-        builder.HasIndex(u => u.Profile.Username)
-            .IsUnique()
-            .HasDatabaseName("ix_users_username_unique");
 
         builder.HasIndex(u => u.CreatedAt)
             .HasDatabaseName("ix_users_created_at");
