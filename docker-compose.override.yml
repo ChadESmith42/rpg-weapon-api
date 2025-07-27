@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Development overrides for PostgreSQL
+  postgres:
+    environment:
+      POSTGRES_DB: weapon_api_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  # Development overrides for the API
+  weaponapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=weapon_api_dev;Username=postgres;Password=postgres
+      - JwtSettings__SecretKey=development-secret-key-that-is-at-least-256-bits-long-for-local-development-only
+      - JwtSettings__Issuer=WeaponApi
+      - JwtSettings__Audience=WeaponApiUsers
+      - JwtSettings__ExpiryInMinutes=180
+      - Logging__LogLevel__Default=Debug
+      - Logging__LogLevel__Microsoft.AspNetCore=Information
+      - Logging__LogLevel__Microsoft.EntityFrameworkCore=Information
+    ports:
+      - "5000:8080"  # Different port for development
+    volumes:
+      # Mount source code for hot reload (if using dotnet watch)
+      - ./WeaponApi.Api:/app/WeaponApi.Api:ro
+      - ./WeaponApi.Application:/app/WeaponApi.Application:ro
+      - ./WeaponApi.Domain:/app/WeaponApi.Domain:ro
+      - ./WeaponApi.Infrastructure:/app/WeaponApi.Infrastructure:ro
+    command: ["dotnet", "watch", "run", "--project", "WeaponApi.Api", "--urls", "http://+:8080"]
+
+  # Development overrides for pgAdmin
+  pgadmin:
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@example.com
+      PGADMIN_DEFAULT_PASSWORD: dev123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"

@@ -46,23 +46,34 @@ services:
       postgres:
         condition: service_healthy
 
-  # Placeholder for the .NET API (uncomment when ready)
-  # weaponapi:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: weaponapi-app
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8000:8080"
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ConnectionStrings__DefaultConnection=Host=postgres;Database=weaponapi;Username=weaponapi_user;Password=Dev123!@#
-  #   networks:
-  #     - weaponapi-network
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+  # .NET Web API
+  weaponapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: weaponapi-app
+    restart: unless-stopped
+    ports:
+      - "8000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=weaponapi;Username=weaponapi_user;Password=Dev123!@#
+      - JwtSettings__SecretKey=production-super-secret-key-that-is-at-least-256-bits-long-for-jwt-signing
+      - JwtSettings__Issuer=WeaponApi
+      - JwtSettings__Audience=WeaponApiUsers
+      - JwtSettings__ExpiryInMinutes=180
+    networks:
+      - weaponapi-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 # Named volumes for data persistence
 volumes:
