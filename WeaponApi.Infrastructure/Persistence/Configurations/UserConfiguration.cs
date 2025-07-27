@@ -74,7 +74,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasConversion(
                 roles => string.Join(',', roles.Select(r => r.Value.ToString())),
                 value => value.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                            .Select(v => Role.Create(Enum.Parse<RoleEnum>(v)))
+                            .Select(v => Role.Create(v.Trim()))
                             .ToList())
             .HasColumnName("roles")
             .HasMaxLength(500)
