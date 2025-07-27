@@ -36,7 +36,7 @@ services:
   # Development overrides for pgAdmin
   pgadmin:
     environment:
-      PGADMIN_DEFAULT_EMAIL: dev@weaponapi.local
+      PGADMIN_DEFAULT_EMAIL: dev@example.com
       PGADMIN_DEFAULT_PASSWORD: dev123
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
