@@ -1,10 +1,10 @@
 # Use the official ASP.NET Core runtime as base image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
 
 # Use the SDK image to build the application
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy project files and restore dependencies
@@ -18,10 +18,10 @@ RUN dotnet restore "WeaponApi.Api/WeaponApi.Api.csproj"
 # Copy all source code
 COPY . .
 
-# Publish the application directly (skip separate build step)
-WORKDIR "/src/WeaponApi.Api"
-RUN dotnet publish "WeaponApi.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
-
+    # Publish the application directly (skip separate build step)
+    WORKDIR "/src/WeaponApi.Api"
+    RUN dotnet publish "WeaponApi.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false --self-contained false
+    
 # Create the final runtime image
 FROM base AS final
 WORKDIR /app
