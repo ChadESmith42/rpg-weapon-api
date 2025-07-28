@@ -26,7 +26,7 @@ public sealed class CreateRandomWeaponCommandHandler : IRequestHandler<CreateRan
         {
             // Generate random weapon properties
             var weaponType = GenerateRandomWeaponType();
-            var weaponName = WeaponName.Generate(weaponType, GenerateRandomAdjective());
+            var weaponName = WeaponName.Generate(weaponType);
             var description = GenerateRandomDescription(weaponType);
             const int maxHitPoints = 100;
             var damage = GenerateRandomDamage();
@@ -58,17 +58,6 @@ public sealed class CreateRandomWeaponCommandHandler : IRequestHandler<CreateRan
         var weaponTypes = Enum.GetValues<WeaponType.WeaponTypeEnum>();
         var randomType = weaponTypes[random.Next(weaponTypes.Length)];
         return WeaponType.Create(randomType);
-    }
-
-    private string GenerateRandomAdjective()
-    {
-        var adjectives = new[]
-        {
-            "Mighty", "Swift", "Ancient", "Gleaming", "Rusty", "Sharp", "Dull",
-            "Enchanted", "Cursed", "Legendary", "Common", "Rare", "Epic", "Divine",
-            "Broken", "Pristine", "Weathered", "Polished", "Ornate", "Simple"
-        };
-        return adjectives[random.Next(adjectives.Length)];
     }
 
     private string GenerateRandomDescription(WeaponType weaponType)

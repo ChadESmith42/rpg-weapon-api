@@ -1,0 +1,1642 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Weapon API - Comprehensive Testing",
+		"description": "Comprehensive test collection for the Weapon API including authentication flows, CRUD operations, and integration testing scenarios.\n\n## Test Strategy\n- **Authentication**: Register user, login, store JWT token as environment variable\n- **Weapons Management**: Create random weapon, store as environment variable, test CRUD operations\n- **Integration Flow**: Complete end-to-end testing scenario\n- **Environment Setup**: Requires PostgreSQL Docker container to be running\n\n## Pre-requisites\n1. Start PostgreSQL container: `docker-compose up -d postgres`\n2. Run the Weapon API: `dotnet run --project WeaponApi.Api`\n3. Set base URL in environment variables\n\n## Test Order\nRun folders in sequence for best results:\n1. Authentication Tests\n2. Weapons CRUD Tests  \n3. Weapons Advanced Operations\n4. Integration Test Scenario\n5. Cleanup Operations",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Authentication Tests",
+			"item": [
+				{
+					"name": "Register New User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate strong password",
+									"function generateStrongPassword() {",
+									"    const lowercase = 'abcdefghijklmnopqrstuvwxyz';",
+									"    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';",
+									"    const numbers = '0123456789';",
+									"    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';",
+									"    ",
+									"    let password = '';",
+									"    ",
+									"    // Ensure at least one character from each category",
+									"    password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));",
+									"    password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));",
+									"    password += numbers.charAt(Math.floor(Math.random() * numbers.length));",
+									"    password += symbols.charAt(Math.floor(Math.random() * symbols.length));",
+									"    ",
+									"    // Add remaining random characters to reach 16 characters total",
+									"    const allChars = lowercase + uppercase + numbers + symbols;",
+									"    for (let i = 4; i < 16; i++) {",
+									"        password += allChars.charAt(Math.floor(Math.random() * allChars.length));",
+									"    }",
+									"    ",
+									"    // Shuffle the password",
+									"    return password.split('').sort(() => Math.random() - 0.5).join('');",
+									"}",
+									"",
+									"const strongPassword = generateStrongPassword();",
+									"pm.environment.set('strong_password', strongPassword);",
+									"console.log('Generated strong password for registration');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful registration",
+									"pm.test('Registration successful', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response contains required fields', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('accessToken');",
+									"    pm.expect(responseJson).to.have.property('refreshToken');",
+									"    pm.expect(responseJson).to.have.property('expiresAt');",
+									"    pm.expect(responseJson).to.have.property('user');",
+									"});",
+									"",
+									"pm.test('User object contains expected fields', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.user).to.have.property('id');",
+									"    pm.expect(responseJson.user).to.have.property('email');",
+									"    pm.expect(responseJson.user).to.have.property('username');",
+									"    pm.expect(responseJson.user).to.have.property('name');",
+									"});",
+									"",
+									"// Store tokens in environment variables",
+									"if (pm.response.code === 201) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('access_token', responseJson.accessToken);",
+									"    pm.environment.set('refresh_token', responseJson.refreshToken);",
+									"    pm.environment.set('user_id', responseJson.user.id);",
+									"    pm.environment.set('user_email', responseJson.user.email);",
+									"    pm.environment.set('username', responseJson.user.username);",
+									"    console.log('✅ User registered and tokens stored successfully');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser_{{$randomInt}}\",\n    \"name\": \"Test User\",\n    \"email\": \"testuser{{$randomInt}}@example.com\",\n    \"password\": \"{{strong_password}}\",\n    \"dateOfBirth\": \"1990-01-01\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful login",
+									"pm.test('Login successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response contains authentication data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('accessToken');",
+									"    pm.expect(responseJson).to.have.property('refreshToken');",
+									"    pm.expect(responseJson).to.have.property('user');",
+									"});",
+									"",
+									"// Update tokens (in case they're different)",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('access_token', responseJson.accessToken);",
+									"    pm.environment.set('refresh_token', responseJson.refreshToken);",
+									"    console.log('✅ Login successful, tokens updated');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emailOrUsername\": \"{{user_email}}\",\n    \"password\": \"{{strong_password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful profile retrieval",
+									"pm.test('Profile retrieval successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Profile contains expected user data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id', pm.environment.get('user_id'));",
+									"    pm.expect(responseJson).to.have.property('email', pm.environment.get('user_email'));",
+									"    pm.expect(responseJson).to.have.property('username', pm.environment.get('username'));",
+									"});",
+									"",
+									"console.log('✅ User profile retrieved successfully');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful token refresh",
+									"pm.test('Token refresh successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('New tokens provided', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('accessToken');",
+									"    pm.expect(responseJson).to.have.property('refreshToken');",
+									"});",
+									"",
+									"// Update with new tokens",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('access_token', responseJson.accessToken);",
+									"    pm.environment.set('refresh_token', responseJson.refreshToken);",
+									"    console.log('✅ Tokens refreshed successfully');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication flow tests including user registration, login, profile access, and token refresh operations."
+		},
+		{
+			"name": "Weapons CRUD Tests",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// Clear weapon IDs only at the start of this test folder",
+							"// This runs once when the folder starts executing",
+							"if (pm.info.eventName === 'prerequest' && pm.info.iteration === 1) {",
+							"    const currentRequest = pm.info.requestName;",
+							"    const isFirstRequestInFolder = currentRequest === 'Get All Weapons';",
+							"    ",
+							"    if (isFirstRequestInFolder) {",
+							"        pm.environment.unset('randomWeaponId');",
+							"        pm.environment.unset('customWeaponId');",
+							"        pm.environment.unset('repairableWeaponId');",
+							"        pm.environment.unset('test_weapon_id');",
+							"        pm.environment.unset('test_weapon_max_hp');",
+							"        pm.environment.unset('test_weapon_current_hp');",
+							"        pm.environment.unset('repair_cost');",
+							"        pm.environment.unset('gained_hp');",
+							"        console.log('🧹 Cleared weapon ID environment variables for fresh test run');",
+							"    }",
+							"}"
+						]
+					}
+				}
+			],
+			"item": [
+				{
+					"name": "Get All Weapons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful retrieval",
+									"pm.test('Get all weapons successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"});",
+									"",
+									"pm.test('Find repairable weapon for testing', function () {",
+									"    const responseJson = pm.response.json();",
+									"    const repairableWeapon = responseJson.find(weapon => weapon.isRepairable === true);",
+									"    pm.expect(repairableWeapon).to.not.be.undefined;",
+									"    pm.environment.set('repairableWeaponId', repairableWeapon.id);",
+									"    console.log(`✅ Found repairable weapon: ${repairableWeapon.name} (ID: ${repairableWeapon.id})`);",
+									"});",
+									"",
+									"// Log weapons count",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    console.log(`✅ Retrieved ${responseJson.length} weapons from database`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Random Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful weapon creation",
+									"pm.test('Random weapon created successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Weapon contains required properties', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson).to.have.property('name');",
+									"    pm.expect(responseJson).to.have.property('description');",
+									"    pm.expect(responseJson).to.have.property('hitPoints');",
+									"    pm.expect(responseJson).to.have.property('maxHitPoints');",
+									"    pm.expect(responseJson).to.have.property('damage');",
+									"    pm.expect(responseJson).to.have.property('isRepairable');",
+									"    pm.expect(responseJson).to.have.property('value');",
+									"    pm.expect(responseJson).to.have.property('isDestroyed');",
+									"});",
+									"",
+									"pm.test('Weapon has valid initial state', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.hitPoints).to.equal(responseJson.maxHitPoints);",
+									"    pm.expect(responseJson.isDestroyed).to.be.false;",
+									"    pm.expect(responseJson.hitPoints).to.be.greaterThan(0);",
+									"    pm.expect(responseJson.damage).to.be.greaterThan(0);",
+									"});",
+									"",
+									"// Store weapon data for subsequent tests",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('randomWeaponId', responseJson.id);",
+									"    pm.environment.set('random_weapon_name', responseJson.name);",
+									"    console.log(`✅ Random weapon created: ${responseJson.name} (ID: ${responseJson.id})`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/create-random",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"create-random"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Damage Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful damage application",
+									"pm.test('Weapon damaged successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Hit points reduced correctly', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.hitPoints).to.be.lessThan(responseJson.maxHitPoints);",
+									"});",
+									"",
+									"pm.test('Weapon state updated correctly', function () {",
+									"    const responseJson = pm.response.json();",
+									"    // Weapon should be damaged but not destroyed",
+									"    pm.expect(responseJson.hitPoints).to.be.greaterThan(0);",
+									"});",
+									"",
+									"// Store current hit points for subsequent tests",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('repairable_weapon_current_hp', responseJson.hitPoints);",
+									"    console.log(`✅ Weapon damaged: ${responseJson.hitPoints}/${responseJson.maxHitPoints} HP remaining`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"damageAmount\": 30\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{repairableWeaponId}}/damage",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{repairableWeaponId}}",
+								"damage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Estimate Repair for Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful estimate",
+									"pm.test('Repair estimate successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Estimate contains required fields', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('repairCost');",
+									"    pm.expect(responseJson).to.have.property('gainedHitPoints');",
+									"    pm.expect(responseJson).to.have.property('gainedValue');",
+									"});",
+									"",
+									"pm.test('Estimate values are reasonable', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.repairCost).to.be.greaterThan(0);",
+									"    pm.expect(responseJson.gainedHitPoints).to.be.greaterThan(0);",
+									"    pm.expect(responseJson.gainedValue).to.be.greaterThanOrEqual(0);",
+									"});",
+									"",
+									"// Store estimate for verification",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('repair_cost', responseJson.repairCost);",
+									"    pm.environment.set('gained_hp', responseJson.gainedHitPoints);",
+									"    console.log(`✅ Repair estimate: ${responseJson.repairCost} cost, +${responseJson.gainedHitPoints} HP`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"weaponId\": \"{{repairableWeaponId}}\",\n    \"repairAmount\": 50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/weapons/estimate-repair",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"estimate-repair"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Repair Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful repair",
+									"pm.test('Weapon repaired successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Hit points restored', function () {",
+									"    const responseJson = pm.response.json();",
+									"    const originalCurrentHp = parseInt(pm.environment.get('repairable_weapon_current_hp'));",
+									"    pm.expect(responseJson.hitPoints).to.be.greaterThan(originalCurrentHp);",
+									"});",
+									"",
+									"pm.test('Weapon fully repaired', function () {",
+									"    const responseJson = pm.response.json();",
+									"    // API uses int.MaxValue for repair amount, should fully repair",
+									"    pm.expect(responseJson.hitPoints).to.equal(responseJson.maxHitPoints);",
+									"});",
+									"",
+									"console.log('✅ Weapon repaired successfully to full health');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{repairableWeaponId}}/repair",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{repairableWeaponId}}",
+								"repair"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Custom Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful creation",
+									"pm.test('Custom weapon created successfully', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Location header provided', function () {",
+									"    pm.expect(pm.response.headers.get('Location')).to.not.be.null;",
+									"});",
+									"",
+									"pm.test('Response contains weapon data', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson.name).to.equal('Sword of Power');",
+									"    pm.expect(responseJson.description).to.equal('A sturdy sword forged by skilled artisans.');",
+									"    pm.expect(responseJson.hitPoints).to.equal(100);",
+									"    pm.expect(responseJson.damage).to.equal(25);",
+									"});",
+									"",
+									"// Store custom weapon ID for cleanup",
+									"if (pm.response.code === 201) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('customWeaponId', responseJson.id);",
+									"    console.log(`✅ Custom weapon created: ${responseJson.name} (ID: ${responseJson.id})`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Sword of Power\",\n    \"description\": \"A sturdy sword forged by skilled artisans.\",\n    \"hitPoints\": 100,\n    \"damage\": 25,\n    \"isRepairable\": true,\n    \"value\": 150.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/weapons",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Random Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful deletion",
+									"pm.test('Random weapon deleted successfully', function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test('Response body is empty on deletion', function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});",
+									"",
+									"console.log('✅ Random weapon deleted successfully');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{randomWeaponId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{randomWeaponId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Custom Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful deletion",
+									"pm.test('Custom weapon deleted successfully', function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test('Response body is empty on deletion', function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});",
+									"",
+									"console.log('✅ Custom weapon deleted successfully');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{customWeaponId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{customWeaponId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD operations for weapons including creation, retrieval, damage, repair, and deletion tests."
+		},
+		{
+			"name": "Integration Test Scenario",
+			"item": [
+				{
+					"name": "Register Integration Test User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate strong password for integration test",
+									"function generateStrongPassword() {",
+									"    const lowercase = 'abcdefghijklmnopqrstuvwxyz';",
+									"    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';",
+									"    const numbers = '0123456789';",
+									"    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';",
+									"    ",
+									"    let password = '';",
+									"    ",
+									"    // Ensure at least one character from each category",
+									"    password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));",
+									"    password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));",
+									"    password += numbers.charAt(Math.floor(Math.random() * numbers.length));",
+									"    password += symbols.charAt(Math.floor(Math.random() * symbols.length));",
+									"    ",
+									"    // Add remaining random characters to reach 16 characters total",
+									"    const allChars = lowercase + uppercase + numbers + symbols;",
+									"    for (let i = 4; i < 16; i++) {",
+									"        password += allChars.charAt(Math.floor(Math.random() * allChars.length));",
+									"    }",
+									"    ",
+									"    // Shuffle the password",
+									"    return password.split('').sort(() => Math.random() - 0.5).join('');",
+									"}",
+									"",
+									"const integrationPassword = generateStrongPassword();",
+									"pm.environment.set('integration_password', integrationPassword);",
+									"console.log('Generated strong password for integration test');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful registration",
+									"pm.test('Integration test user registered successfully', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// Store integration test tokens",
+									"if (pm.response.code === 201) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('integration_access_token', responseJson.accessToken);",
+									"    pm.environment.set('integration_user_id', responseJson.user.id);",
+									"    console.log('✅ Integration test user registered');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"integration_user_{{$randomInt}}\",\n    \"name\": \"Integration Test User\",\n    \"email\": \"integration{{$randomInt}}@example.com\",\n    \"password\": \"{{integration_password}}\",\n    \"dateOfBirth\": \"1985-05-15\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Integration User Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration user profile retrieved', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Profile matches registered user', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.id).to.equal(pm.environment.get('integration_user_id'));",
+									"});",
+									"",
+									"console.log('✅ Integration user profile verified');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Integration Test Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration test weapon created', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Store integration weapon",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('integration_weapon_id', responseJson.id);",
+									"    pm.environment.set('integration_weapon_max_hp', responseJson.maxHitPoints);",
+									"    console.log(`✅ Integration weapon created: ${responseJson.name}`);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/create-random",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"create-random"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Damage Integration Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration weapon damaged', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Weapon properly damaged', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.hitPoints).to.be.lessThan(responseJson.maxHitPoints);",
+									"});",
+									"",
+									"console.log('✅ Integration weapon damaged for testing');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"damageAmount\": 25\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{integration_weapon_id}}/damage",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{integration_weapon_id}}",
+								"damage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Integration Weapon by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration weapon retrieved by ID', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Damage is reflected in retrieved weapon', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.hitPoints).to.be.lessThan(responseJson.maxHitPoints);",
+									"});",
+									"",
+									"console.log('✅ Integration weapon state verified');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{integration_weapon_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{integration_weapon_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Integration Repair Estimate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration repair estimate obtained', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Estimate provides repair information', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.repairCost).to.be.greaterThan(0);",
+									"    pm.expect(responseJson.gainedHitPoints).to.be.greaterThan(0);",
+									"});",
+									"",
+									"console.log('✅ Integration repair estimate completed');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"weaponId\": \"{{integration_weapon_id}}\",\n    \"repairAmount\": 100\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/weapons/estimate-repair",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"estimate-repair"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Repair Integration Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration weapon repaired', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Weapon health restored', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.hitPoints).to.equal(responseJson.maxHitPoints);",
+									"});",
+									"",
+									"console.log('✅ Integration weapon repaired');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{integration_weapon_id}}/repair",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{integration_weapon_id}}",
+								"repair"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Integration Changes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Final integration verification successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('All changes properly persisted', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.hitPoints).to.equal(responseJson.maxHitPoints);",
+									"    pm.expect(responseJson.id).to.equal(pm.environment.get('integration_weapon_id'));",
+									"});",
+									"",
+									"console.log('✅ Integration test scenario completed successfully');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{integration_weapon_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{integration_weapon_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Complete end-to-end integration test scenario: register user, get profile, create weapon, damage weapon, get weapon by ID, get repair estimate, repair weapon, verify changes."
+		},
+		{
+			"name": "Error Handling Tests",
+			"item": [
+				{
+					"name": "Invalid Authentication",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Unauthorized access properly rejected', function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"console.log('✅ Invalid authentication properly handled');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer invalid_token_12345"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-existent Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Non-existent weapon returns 400 (security feature)', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Error message provided', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('message');",
+									"});",
+									"",
+									"console.log('✅ Non-existent weapon properly handled with security feature');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Login Credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Invalid credentials rejected', function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('Error message provided', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('message');",
+									"});",
+									"",
+									"console.log('✅ Invalid login credentials properly handled');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emailOrUsername\": \"nonexistent@example.com\",\n    \"password\": \"WrongPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Weapon Creation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Invalid weapon data rejected', function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test('Validation errors provided', function () {",
+									"    const responseJson = pm.response.json();",
+									"    // Should contain either 'errors' or 'message' property",
+									"    const hasErrors = responseJson.hasOwnProperty('errors') || responseJson.hasOwnProperty('message');",
+									"    pm.expect(hasErrors).to.be.true;",
+									"});",
+									"",
+									"console.log('✅ Invalid weapon creation properly handled');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"\",\n    \"description\": \"\",\n    \"hitPoints\": -10,\n    \"damage\": -5,\n    \"isRepairable\": true,\n    \"value\": -100.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/weapons",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Error handling tests to verify proper validation and error responses for various failure scenarios."
+		},
+		{
+			"name": "Cleanup Operations",
+			"item": [
+				{
+					"name": "Delete Custom Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Custom weapon deletion handled (already deleted)', function () {",
+									"    // Weapon should already be deleted from CRUD tests, so expect 404",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"console.log('✅ Custom weapon cleanup verified (already deleted)');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{customWeaponId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{customWeaponId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Test Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Test weapon deleted successfully', function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"console.log('✅ Test weapon cleaned up successfully');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{integration_weapon_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{integration_weapon_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Integration Weapon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration weapon deletion handled (already deleted)', function () {",
+									"    // Weapon should already be deleted in 'Delete Test Weapon' step, so expect 404",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"console.log('✅ Integration weapon cleanup verified (already deleted)');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/weapons/{{integration_weapon_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"weapons",
+								"{{integration_weapon_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout Main User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Logout successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"console.log('✅ Main user logged out successfully');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout Integration User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Integration user logout successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"console.log('✅ Integration user logged out successfully');",
+									"console.log('🎉 All cleanup operations completed!');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{integration_access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Cleanup operations to remove test data and logout users created during testing."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global pre-request script",
+					"// Set default base URL if not already set",
+					"if (!pm.environment.get('base_url')) {",
+					"    pm.environment.set('base_url', 'https://localhost:5001');",
+					"    console.log('📝 Set default base URL to https://localhost:5001');",
+					"}",
+					"",
+					"// Log current request for debugging",
+					"console.log(`🚀 Executing: ${pm.request.method} ${pm.request.url}`);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script",
+					"// Log response status and time",
+					"console.log(`📊 Response: ${pm.response.status} ${pm.response.code} (${pm.response.responseTime}ms)`);",
+					"",
+					"// Basic response validation",
+					"pm.test('Response time is reasonable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(10000); // 10 seconds max",
+					"});",
+					"",
+					"// Ensure we have a valid response",
+					"if (pm.response.code >= 200 && pm.response.code < 300) {",
+					"    pm.test('Successful response received', function () {",
+					"        pm.response.to.be.success;",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://localhost:5001",
+			"type": "string"
+		}
+	]
+}
