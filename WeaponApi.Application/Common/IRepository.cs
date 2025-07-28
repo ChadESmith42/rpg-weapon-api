@@ -18,6 +18,13 @@ public interface IRepository<TAggregate, in TId>
     Task<TAggregate?> FindByIdAsync(TId id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves all aggregates from the repository.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>All aggregates in the repository</returns>
+    Task<IReadOnlyList<TAggregate>> FindAllAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Adds a new aggregate to the repository.
     /// </summary>
     /// <param name="aggregate">The aggregate to add</param>

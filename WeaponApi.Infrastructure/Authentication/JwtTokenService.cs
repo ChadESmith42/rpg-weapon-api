@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -91,7 +92,10 @@ public sealed class JwtTokenService : IJwtTokenService
         if (claimsPrincipal == null)
             return TokenExtractionResult<UserId>.InvalidToken();
 
-        var userIdClaim = claimsPrincipal.FindFirst("sub");
+        // Try both "sub" and the full .NET claim type for nameidentifier
+        var userIdClaim = claimsPrincipal.FindFirst("sub") ??
+                         claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+
         if (userIdClaim == null || string.IsNullOrWhiteSpace(userIdClaim.Value))
             return TokenExtractionResult<UserId>.MissingClaim("sub");
 
@@ -189,7 +193,10 @@ public sealed class JwtTokenService : IJwtTokenService
             throw new InvalidOperationException("JWT secret key is not configured");
 
         var keyBytes = Encoding.UTF8.GetBytes(secretKey);
-        return new SymmetricSecurityKey(keyBytes);
+        return new SymmetricSecurityKey(keyBytes)
+        {
+            KeyId = "WeaponApiKey"
+        };
     }
 
     private DateTime CalculateTokenExpiration(IReadOnlyList<Role> roles)

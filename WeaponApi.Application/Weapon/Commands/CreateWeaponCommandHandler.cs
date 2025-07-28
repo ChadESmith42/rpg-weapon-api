@@ -32,7 +32,7 @@ public sealed class CreateWeaponCommandHandler : IRequestHandler<CreateWeaponCom
         try
         {
             var weaponType = WeaponType.Create(request.Type);
-            var weaponName = WeaponName.Generate(weaponType, request.Name);
+            var weaponName = WeaponName.Create(request.Name);
 
             var duplicateCheckResult = await CheckForDuplicateWeapon(weaponName, cancellationToken);
             if (!duplicateCheckResult.IsValid)

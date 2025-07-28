@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WeaponApi.Api.Middleware;
+using WeaponApi.Application;
 using WeaponApi.Infrastructure;
 using WeaponApi.Infrastructure.Persistence;
 
@@ -24,13 +25,13 @@ builder.Services.AddDbContext<WeaponApiDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // Add Infrastructure services (repositories, services, etc.)
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Configure JWT Authentication
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not found.");
-var issuer = jwtSettings["Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found.");
-var audience = jwtSettings["Audience"] ?? throw new InvalidOperationException("JWT Audience not found.");
+var secretKey = builder.Configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not found.");
+var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found.");
+var audience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT Audience not found.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,8 +48,11 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = issuer,
         ValidAudience = audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-        ClockSkew = TimeSpan.Zero // Remove delay of token when expire
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        {
+            KeyId = "WeaponApiKey"
+        },
+        ClockSkew = TimeSpan.FromMinutes(5) // Allow 5 minutes clock skew to match JwtTokenService
     };
 });
 
@@ -92,3 +96,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Make Program class public for testing
+public partial class Program { }

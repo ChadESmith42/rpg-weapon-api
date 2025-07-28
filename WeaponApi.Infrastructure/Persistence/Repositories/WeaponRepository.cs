@@ -23,6 +23,12 @@ public sealed class WeaponRepository : IWeaponRepository
             .FirstOrDefaultAsync(weapon => weapon.Id == id, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Weapon>> FindAllAsync(CancellationToken cancellationToken = default)
+    {
+        var weapons = await context.Weapons.ToListAsync(cancellationToken);
+        return weapons.AsReadOnly();
+    }
+
     public async Task AddAsync(Weapon aggregate, CancellationToken cancellationToken = default)
     {
         await context.Weapons.AddAsync(aggregate, cancellationToken);

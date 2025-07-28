@@ -1,6 +1,6 @@
 ﻿namespace WeaponApi.Domain.Weapon;
 
-public class WeaponType
+public sealed class WeaponType
 {
   public WeaponTypeEnum Value { get; }
 
