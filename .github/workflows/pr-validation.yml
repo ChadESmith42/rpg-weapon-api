@@ -1,11 +1,11 @@
 name: PR Validation
 
-# Trigger on pull requests to any branch
+# Trigger on pushes to any branch except dev/main, and PRs targeting dev/main
 on:
   pull_request:
-    branches: ['*']
+    branches: [ development, main ]
   push:
-    branches: [development, main]
+    branches-ignore: [ development, main ]
 
 # Set permissions for the workflow
 permissions:
