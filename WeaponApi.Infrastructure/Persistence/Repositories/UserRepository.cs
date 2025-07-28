@@ -24,6 +24,12 @@ public sealed class UserRepository : IUserRepository
             .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<User>> FindAllAsync(CancellationToken cancellationToken = default)
+    {
+        var users = await context.Users.ToListAsync(cancellationToken);
+        return users.AsReadOnly();
+    }
+
     public async Task AddAsync(User aggregate, CancellationToken cancellationToken = default)
     {
         await context.Users.AddAsync(aggregate, cancellationToken);

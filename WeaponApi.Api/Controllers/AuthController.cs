@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WeaponApi.Api.Models.Requests;
 using WeaponApi.Api.Models.Responses;
 using WeaponApi.Application.Authentication;
@@ -78,7 +79,7 @@ public sealed class AuthController : ControllerBase
                 userResult.User.Profile.Username,
                 userResult.User.Profile.Name));
 
-        return Ok(response);
+        return Created($"/api/auth/profile", response);
     }
 
     /// <summary>
@@ -116,6 +117,85 @@ public sealed class AuthController : ControllerBase
     }
 
     /// <summary>
+    /// Refreshes JWT tokens using a valid refresh token.
+    /// </summary>
+    /// <param name="request">The refresh token request.</param>
+    /// <returns>Returns new authentication response with refreshed JWT tokens.</returns>
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    {
+        try
+        {
+            // Validate the refresh token
+            var tokenValidation = jwtTokenService.ValidateToken(request.RefreshToken);
+            if (!tokenValidation.IsSuccess)
+            {
+                return Unauthorized(new { message = "Invalid or expired refresh token" });
+            }
+
+            // Get user ID from token
+            var userIdResult = jwtTokenService.GetUserIdFromToken(request.RefreshToken);
+            if (!userIdResult.IsSuccess || userIdResult.Value == null)
+            {
+                return Unauthorized(new { message = "Invalid user ID in refresh token" });
+            }
+
+            var query = new GetUserProfileQuery(userIdResult.Value);
+            var result = await mediator.Send(query);
+
+            if (!result.IsSuccess)
+            {
+                return Unauthorized(new { message = "User not found" });
+            }
+
+            // Generate new tokens
+            var accessToken = jwtTokenService.GenerateAccessToken(result.User!, result.User!.Roles);
+            var refreshToken = jwtTokenService.GenerateRefreshToken(result.User!.Id);
+            var expiresAt = DateTime.UtcNow.AddMinutes(180);
+
+            var response = new AuthResponse(
+                accessToken,
+                refreshToken,
+                expiresAt,
+                new UserResponse(
+                    result.User!.Id.Value,
+                    result.User.Email.Value,
+                    result.User.Profile.Username,
+                    result.User.Profile.Name));
+
+            return Ok(response);
+        }
+        catch (Exception)
+        {
+            return Unauthorized(new { message = "Invalid refresh token" });
+        }
+    }
+
+    /// <summary>
+    /// Logs out the current user by invalidating their tokens.
+    /// </summary>
+    /// <returns>Returns success confirmation.</returns>
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        // Extract user ID from JWT claims - ASP.NET Core maps 'sub' to nameidentifier
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub") ?? User.FindFirst("userId");
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userGuid))
+        {
+            return Unauthorized(new { message = "Invalid or missing user ID in token" });
+        }
+
+        // In a real implementation, you would typically:
+        // 1. Add the token to a blacklist/revocation list
+        // 2. Store revoked tokens in a cache or database
+        // 3. Check this list during token validation
+        // For now, we'll just return success as the client should discard the tokens
+
+        return Ok(new { message = "Successfully logged out" });
+    }
+
+    /// <summary>
     /// Retrieves the current user's profile information.
     /// Users can only access their own profile unless they have admin role.
     /// </summary>
@@ -124,10 +204,11 @@ public sealed class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetProfile()
     {
-        // Extract user ID from JWT claims
-        var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("userId");
+        // Extract user ID from JWT claims - ASP.NET Core maps 'sub' to nameidentifier
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub") ?? User.FindFirst("userId");
         if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var authenticatedUserGuid))
         {
+            Console.WriteLine($"Failed to find user ID claim. userIdClaim: {userIdClaim?.Value}");
             return Unauthorized(new { message = "Invalid or missing user ID in token" });
         }
 
@@ -159,8 +240,8 @@ public sealed class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetUserProfile(Guid userId)
     {
-        // Extract authenticated user ID from JWT claims
-        var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("userId");
+        // Extract authenticated user ID from JWT claims - ASP.NET Core maps 'sub' to nameidentifier
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub") ?? User.FindFirst("userId");
         if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var authenticatedUserGuid))
         {
             return Unauthorized(new { message = "Invalid or missing user ID in token" });

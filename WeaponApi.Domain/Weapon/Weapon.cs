@@ -1,6 +1,6 @@
 ﻿namespace WeaponApi.Domain.Weapon;
 
-public class Weapon
+public sealed class Weapon
 {
   public WeaponId Id { get; }
   public WeaponType Type { get; private set; } = WeaponType.Spoon;
@@ -53,12 +53,15 @@ public class Weapon
       throw new InvalidOperationException("This weapon cannot be repaired.");
     }
 
-    int actualRepair = Math.Min(repairAmount, this.Damage);
-    this.Damage -= actualRepair;
-    this.HitPoints = Math.Min(this.MaxHitPoints, this.HitPoints + actualRepair);
+    // Calculate how much we can actually repair (can't exceed max hit points)
+    int damageToRepair = this.MaxHitPoints - this.HitPoints;
+    int actualRepair = Math.Min(repairAmount, damageToRepair);
 
+    // Restore hit points
+    this.HitPoints += actualRepair;
+
+    // Adjust value based on repair
     decimal repairRatio = (decimal)actualRepair / this.MaxHitPoints;
-
     this.Value = this.Type.IsMagicWeapon() ? this.Value + (repairRatio * 0.5m) : this.Value + (repairRatio * 0.3m);
   }
 

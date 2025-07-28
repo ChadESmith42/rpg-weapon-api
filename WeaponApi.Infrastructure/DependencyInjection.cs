@@ -53,6 +53,9 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IPasswordHashService, PasswordHashService>();
 
+        // Register the domain password hasher adapter
+        services.AddScoped<WeaponApi.Domain.User.IPasswordHasher, PasswordHasherAdapter>();
+
         return services;
     }
 }

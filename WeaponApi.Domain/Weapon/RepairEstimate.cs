@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WeaponApi.Domain.Weapon
 {
-    public class RepairEstimate
+    public sealed class RepairEstimate
     {
         public int RepairCost { get; }
         public int GainedHitPoints { get; }
