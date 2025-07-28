@@ -106,31 +106,31 @@ public sealed record WeaponName
         return new WeaponName(generatedName);
     }
 
-  public static WeaponName Generate(WeaponType weaponType, string defaultDescriptor)
-  {
-    if (weaponType == null)
-      throw new ArgumentNullException(nameof(weaponType));
-    if (string.IsNullOrEmpty(defaultDescriptor))
-      throw new ArgumentException("Default descriptor cannot be null or empty", nameof(defaultDescriptor));
-    if (!Descriptors.Contains(defaultDescriptor, StringComparer.OrdinalIgnoreCase))
-      throw new ArgumentException("Default descriptor must be one of the predefined descriptors", nameof(defaultDescriptor));
+    public static WeaponName Generate(WeaponType weaponType, string defaultDescriptor)
+    {
+        if (weaponType == null)
+            throw new ArgumentNullException(nameof(weaponType));
+        if (string.IsNullOrEmpty(defaultDescriptor))
+            throw new ArgumentException("Default descriptor cannot be null or empty", nameof(defaultDescriptor));
+        if (!Descriptors.Contains(defaultDescriptor, StringComparer.OrdinalIgnoreCase))
+            throw new ArgumentException("Default descriptor must be one of the predefined descriptors", nameof(defaultDescriptor));
 
-    var generatedName = $"{weaponType} of {defaultDescriptor}";
+        var generatedName = $"{weaponType} of {defaultDescriptor}";
 
-    return new WeaponName(generatedName);
-  }
+        return new WeaponName(generatedName);
+    }
 
     public static WeaponName Generate(WeaponType weaponType, int seed)
-  {
-    if (weaponType == null)
-      throw new ArgumentNullException(nameof(weaponType));
+    {
+        if (weaponType == null)
+            throw new ArgumentNullException(nameof(weaponType));
 
-    var random = new Random(seed);
-    var descriptor = Descriptors[random.Next(Descriptors.Length)];
-    var generatedName = $"{weaponType} of {descriptor}";
+        var random = new Random(seed);
+        var descriptor = Descriptors[random.Next(Descriptors.Length)];
+        var generatedName = $"{weaponType} of {descriptor}";
 
-    return new WeaponName(generatedName);
-  }
+        return new WeaponName(generatedName);
+    }
 
     public bool ContainsDescriptor(string descriptor)
     {
