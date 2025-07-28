@@ -42,8 +42,7 @@ jobs:
         dotnet test WeaponApi.sln \
           --configuration Release \
           --no-build \
-          --verbosity normal \
-          --logger "GitHubActions"
+          --verbosity normal
         if [ $? -eq 0 ]; then
           echo "✅ All tests passed"
         else
