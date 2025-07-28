@@ -1,6 +1,9 @@
 -- PostgreSQL initialization script for Weapon API
 -- This script runs when the PostgreSQL container is first created
 
+-- Create the application user first
+CREATE USER weaponapi_user WITH PASSWORD 'weaponapi_dev_password';
+
 -- Ensure the weaponapi database exists
 SELECT 'CREATE DATABASE weaponapi'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'weaponapi')\gexec

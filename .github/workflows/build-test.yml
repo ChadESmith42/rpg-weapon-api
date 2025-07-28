@@ -1,0 +1,64 @@
+name: Build and Test
+
+# Trigger on all pull requests and pushes to main branches
+on:
+  pull_request:
+    branches: [ '*' ]
+  push:
+    branches: [ development, main ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        include-prerelease: true
+
+    - name: Restore dependencies
+      run: dotnet restore WeaponApi.sln
+
+    - name: Build solution
+      run: |
+        echo "🏗️ Building solution..."
+        dotnet build WeaponApi.sln --configuration Release --no-restore
+        if [ $? -eq 0 ]; then
+          echo "✅ Build completed successfully"
+        else
+          echo "❌ Build failed"
+          exit 1
+        fi
+
+    - name: Run tests
+      run: |
+        echo "🧪 Running tests..."
+        dotnet test WeaponApi.sln \
+          --configuration Release \
+          --no-build \
+          --verbosity normal
+        if [ $? -eq 0 ]; then
+          echo "✅ All tests passed"
+        else
+          echo "❌ Tests failed"
+          exit 1
+        fi
+      env:
+        ASPNETCORE_ENVIRONMENT: Testing
+
+    - name: Success notification
+      if: success()
+      run: echo "🎉 Build and tests completed successfully! PR is ready for review."
+
+    - name: Failure notification
+      if: failure()
+      run: |
+        echo "🚫 Build or tests failed. Please fix the issues before merging."
+        echo "Check the logs above for detailed error information."
+        exit 1
