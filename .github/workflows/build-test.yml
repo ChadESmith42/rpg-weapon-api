@@ -1,9 +1,7 @@
 name: Build and Test
 
-# Trigger on pushes to any branch except dev/main, and PRs targeting dev/main
+# Trigger only on pushes to any branch except dev/main
 on:
-  pull_request:
-    branches: [ development, main ]
   push:
     branches-ignore: [ development, main ]
 
