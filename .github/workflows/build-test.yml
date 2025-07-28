@@ -1,11 +1,11 @@
 name: Build and Test
 
-# Trigger on all pull requests and pushes to main branches
+# Trigger on pushes to any branch except dev/main, and PRs targeting dev/main
 on:
   pull_request:
-    branches: [ '*' ]
-  push:
     branches: [ development, main ]
+  push:
+    branches-ignore: [ development, main ]
 
 jobs:
   build-and-test:
@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.x'
-        include-prerelease: true
+
 
     - name: Restore dependencies
       run: dotnet restore WeaponApi.sln
