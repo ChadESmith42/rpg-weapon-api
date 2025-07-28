@@ -18,27 +18,9 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
 
-    # Use PostgreSQL service for integration tests
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: weapon_api_test
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch full history for better analysis
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -46,48 +28,46 @@ jobs:
         dotnet-version: '9.0.x'
         include-prerelease: true
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
-
     - name: Restore dependencies
       run: dotnet restore WeaponApi.sln
 
     - name: Build solution
       run: |
-        echo "::group::Building solution"
-        dotnet build WeaponApi.sln --configuration Release --no-restore --verbosity normal
-        echo "::endgroup::"
+        echo "🏗️ Building solution..."
+        dotnet build WeaponApi.sln --configuration Release --no-restore
+        if [ $? -eq 0 ]; then
+          echo "✅ Build completed successfully"
+        else
+          echo "❌ Build failed"
+          exit 1
+        fi
 
     - name: Run tests
       run: |
-        echo "::group::Running all tests"
+        echo "🧪 Running tests..."
         dotnet test WeaponApi.sln \
           --configuration Release \
           --no-build \
-          --verbosity normal \
-          --logger "trx;LogFileName=test-results.trx" \
-          --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true" \
-          --collect:"XPlat Code Coverage" \
-          --results-directory ./TestResults/ \
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-        echo "::endgroup::"
+          --verbosity normal
+        if [ $? -eq 0 ]; then
+          echo "✅ All tests passed"
+        else
+          echo "❌ Tests failed"
+          exit 1
+        fi
       env:
-        # Test configuration for CI environment
         ASPNETCORE_ENVIRONMENT: Testing
-        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=weapon_api_test;Username=test_user;Password=test_password"
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results
-        path: TestResults/**/*
-        retention-days: 30
+    - name: Success notification
+      if: success()
+      run: echo "🎉 Build and tests completed successfully! PR is ready for review."
+
+    - name: Failure notification
+      if: failure()
+      run: |
+        echo "🚫 Build or tests failed. Please fix the issues before merging."
+        echo "Check the logs above for detailed error information."
+        exit 1
 
     - name: Upload code coverage
       uses: actions/upload-artifact@v4
