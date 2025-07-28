@@ -2,13 +2,13 @@
 
 This directory contains comprehensive Postman testing resources for the Weapon API, including authentication flows, CRUD operations, and integration testing scenarios.
 
-## 📁 Files
+## Files
 
 - **`WeaponAPI-Comprehensive-Testing.postman_collection.json`** - Complete test collection with all API endpoints
 - **`WeaponAPI-Testing.postman_environment.json`** - Environment variables for test execution
 - **`README.md`** - This documentation file
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -39,54 +39,54 @@ This directory contains comprehensive Postman testing resources for the Weapon A
    - The environment defaults to `http://localhost:5297`
    - Update the `base_url` variable if your API runs on a different port
 
-## 📋 Test Structure
+## Test Structure
 
 The collection is organized into **6 main folders** with **35 total requests**:
 
 ### 1. Authentication Tests (4 requests)
-- ✅ Register New User
-- ✅ Login User
-- ✅ Get User Profile
-- ✅ Refresh Token
+- Register New User
+- Login User
+- Get User Profile
+- Refresh Token
 
 ### 2. Weapons CRUD Tests (4 requests)
-- ✅ Create Random Weapon
-- ✅ Get All Weapons
-- ✅ Get Weapon by ID
-- ✅ Create Custom Weapon
+- Create Random Weapon
+- Get All Weapons
+- Get Weapon by ID
+- Create Custom Weapon
 
 ### 3. Weapons Advanced Operations (6 requests)
-- ✅ Damage Weapon
-- ✅ Get Damaged Weapon
-- ✅ Get Repair Estimate
-- ✅ Repair Weapon
-- ✅ Verify Repair
+- Damage Weapon
+- Get Damaged Weapon
+- Get Repair Estimate
+- Repair Weapon
+- Verify Repair
 
 ### 4. Integration Test Scenario (8 requests)
 Complete end-to-end flow:
-- ✅ Register Integration Test User
-- ✅ Get Integration User Profile
-- ✅ Create Integration Test Weapon
-- ✅ Damage Integration Weapon
-- ✅ Get Integration Weapon by ID
-- ✅ Get Integration Repair Estimate
-- ✅ Repair Integration Weapon
-- ✅ Verify Integration Changes
+- Register Integration Test User
+- Get Integration User Profile
+- Create Integration Test Weapon
+- Damage Integration Weapon
+- Get Integration Weapon by ID
+- Get Integration Repair Estimate
+- Repair Integration Weapon
+- Verify Integration Changes
 
 ### 5. Error Handling Tests (4 requests)
-- ❌ Invalid Authentication
-- ❌ Get Non-existent Weapon
-- ❌ Invalid Login Credentials
-- ❌ Invalid Weapon Creation
+- Invalid Authentication
+- Get Non-existent Weapon
+- Invalid Login Credentials
+- Invalid Weapon Creation
 
 ### 6. Cleanup Operations (5 requests)
-- 🧹 Delete Custom Weapon
-- 🧹 Delete Test Weapon
-- 🧹 Delete Integration Weapon
-- 🧹 Logout Main User
-- 🧹 Logout Integration User
+- Delete Custom Weapon
+- Delete Test Weapon
+- Delete Integration Weapon
+- Logout Main User
+- Logout Integration User
 
-## 🔄 Test Execution Strategy
+## Test Execution Strategy
 
 ### Recommended Execution Order
 
@@ -125,30 +125,30 @@ The tests automatically manage these environment variables:
 - `integration_user_id` - Integration test user ID
 - `integration_weapon_id` - Integration test weapon ID
 
-## 🧪 Test Features
+## Test Features
 
 ### Comprehensive Validation
-- ✅ **Response Status Codes** - Validates HTTP status codes
-- ✅ **Response Structure** - Checks required fields in responses
-- ✅ **Data Consistency** - Verifies data persistence across operations
-- ✅ **Authentication Flow** - Tests JWT token management
-- ✅ **Error Handling** - Validates proper error responses
-- ✅ **Business Logic** - Tests weapon damage/repair mechanics
+- **Response Status Codes** - Validates HTTP status codes
+- **Response Structure** - Checks required fields in responses
+- **Data Consistency** - Verifies data persistence across operations
+- **Authentication Flow** - Tests JWT token management
+- **Error Handling** - Validates proper error responses
+- **Business Logic** - Tests weapon damage/repair mechanics
 
 ### Automated Test Data Management
-- 🔄 **Dynamic User Creation** - Uses random usernames/emails
-- 🔄 **Token Storage** - Automatically stores and uses JWT tokens
-- 🔄 **Weapon Lifecycle** - Creates, modifies, and cleans up test weapons
-- 🔄 **State Verification** - Confirms changes persist correctly
+- **Dynamic User Creation** - Uses random usernames/emails
+- **Token Storage** - Automatically stores and uses JWT tokens
+- **Weapon Lifecycle** - Creates, modifies, and cleans up test weapons
+- **State Verification** - Confirms changes persist correctly
 
 ### Real-world Testing Scenarios
-- 👤 **User Registration & Authentication**
-- ⚔️ **Weapon Creation & Management**
-- 💥 **Damage Application & Repair**
-- 🔍 **Data Retrieval & Verification**
-- 🧹 **Cleanup & Resource Management**
+- **User Registration & Authentication**
+- **Weapon Creation & Management**
+- **Damage Application & Repair**
+- **Data Retrieval & Verification**
+- **Cleanup & Resource Management**
 
-## 🎯 Test Scenarios Covered
+## Test Scenarios Covered
 
 ### Happy Path Testing
 - User registration and login flow
@@ -168,7 +168,7 @@ The tests automatically manage these environment variables:
 - Sequential operation validation
 - State persistence verification
 
-## 🔧 Customization
+## Customization
 
 ### Modifying Base URL
 Update the `base_url` environment variable to match your API deployment:
@@ -194,7 +194,7 @@ Modify request bodies to test specific scenarios:
 - Damage amounts
 - Repair amounts
 
-## 📊 Expected Results
+## Expected Results
 
 ### Successful Test Run
 - **Authentication Tests**: 4/4 passing
@@ -204,7 +204,7 @@ Modify request bodies to test specific scenarios:
 - **Error Handling**: 4/4 passing
 - **Cleanup**: 5/5 passing
 
-**Total: 31/31 tests passing** ✅
+**Total: 31/31 tests passing**
 
 ### Performance Expectations
 - Response times should be under 10 seconds
@@ -212,7 +212,7 @@ Modify request bodies to test specific scenarios:
 - CRUD operations: < 1 second
 - Database operations: < 3 seconds
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -241,7 +241,7 @@ Modify request bodies to test specific scenarios:
 - Response times and status codes are logged
 - Environment variables are tracked throughout execution
 
-## 📈 Test Metrics
+## Test Metrics
 
 The collection provides comprehensive coverage of:
 - **8 Authentication endpoints** (register, login, profile, refresh, logout)
@@ -254,8 +254,8 @@ This represents **100% API endpoint coverage** for the Weapon API.
 
 ---
 
-## 🎉 Ready to Test!
+## Ready to Test
 
 Your Postman collection is ready for comprehensive API testing. Run the tests in sequence for the best experience, or target specific areas for focused testing.
 
-Happy testing! 🚀
+Happy testing!
