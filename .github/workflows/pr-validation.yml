@@ -48,7 +48,11 @@ jobs:
         dotnet test WeaponApi.sln \
           --configuration Release \
           --no-build \
-          --verbosity normal
+          --verbosity normal \
+          --logger "trx;LogFileName=test-results.trx" \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults/ \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         if [ $? -eq 0 ]; then
           echo "✅ All tests passed"
         else
@@ -68,6 +72,14 @@ jobs:
         echo "🚫 Build or tests failed. Please fix the issues before merging."
         echo "Check the logs above for detailed error information."
         exit 1
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/**/*
+        retention-days: 30
 
     - name: Upload code coverage
       uses: actions/upload-artifact@v4
