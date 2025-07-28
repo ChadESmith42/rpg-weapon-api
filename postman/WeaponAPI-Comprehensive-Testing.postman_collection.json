@@ -82,7 +82,7 @@
 									"    pm.environment.set('user_id', responseJson.user.id);",
 									"    pm.environment.set('user_email', responseJson.user.email);",
 									"    pm.environment.set('username', responseJson.user.username);",
-									"    console.log('✅ User registered and tokens stored successfully');",
+									"    console.log('User registered and tokens stored successfully');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -139,7 +139,7 @@
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('access_token', responseJson.accessToken);",
 									"    pm.environment.set('refresh_token', responseJson.refreshToken);",
-									"    console.log('✅ Login successful, tokens updated');",
+									"    console.log('Login successful, tokens updated');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -191,7 +191,7 @@
 									"    pm.expect(responseJson).to.have.property('username', pm.environment.get('username'));",
 									"});",
 									"",
-									"console.log('✅ User profile retrieved successfully');"
+									"console.log('User profile retrieved successfully');"
 								],
 								"type": "text/javascript"
 							}
@@ -242,7 +242,7 @@
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('access_token', responseJson.accessToken);",
 									"    pm.environment.set('refresh_token', responseJson.refreshToken);",
-									"    console.log('✅ Tokens refreshed successfully');",
+									"    console.log('Tokens refreshed successfully');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -301,7 +301,7 @@
 							"        pm.environment.unset('test_weapon_current_hp');",
 							"        pm.environment.unset('repair_cost');",
 							"        pm.environment.unset('gained_hp');",
-							"        console.log('🧹 Cleared weapon ID environment variables for fresh test run');",
+							"        console.log('Cleared weapon ID environment variables for fresh test run');",
 							"    }",
 							"}"
 						]
@@ -331,13 +331,13 @@
 									"    const repairableWeapon = responseJson.find(weapon => weapon.isRepairable === true);",
 									"    pm.expect(repairableWeapon).to.not.be.undefined;",
 									"    pm.environment.set('repairableWeaponId', repairableWeapon.id);",
-									"    console.log(`✅ Found repairable weapon: ${repairableWeapon.name} (ID: ${repairableWeapon.id})`);",
+									"    console.log(`Found repairable weapon: ${repairableWeapon.name} (ID: ${repairableWeapon.id})`);",
 									"});",
 									"",
 									"// Log weapons count",
 									"if (pm.response.code === 200) {",
 									"    const responseJson = pm.response.json();",
-									"    console.log(`✅ Retrieved ${responseJson.length} weapons from database`);",
+									"    console.log(`Retrieved ${responseJson.length} weapons from database`);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -403,7 +403,7 @@
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('randomWeaponId', responseJson.id);",
 									"    pm.environment.set('random_weapon_name', responseJson.name);",
-									"    console.log(`✅ Random weapon created: ${responseJson.name} (ID: ${responseJson.id})`);",
+									"    console.log(`Random weapon created: ${responseJson.name} (ID: ${responseJson.id})`);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -459,7 +459,7 @@
 									"if (pm.response.code === 200) {",
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('repairable_weapon_current_hp', responseJson.hitPoints);",
-									"    console.log(`✅ Weapon damaged: ${responseJson.hitPoints}/${responseJson.maxHitPoints} HP remaining`);",
+									"    console.log(`Weapon damaged: ${responseJson.hitPoints}/${responseJson.maxHitPoints} HP remaining`);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -528,7 +528,7 @@
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('repair_cost', responseJson.repairCost);",
 									"    pm.environment.set('gained_hp', responseJson.gainedHitPoints);",
-									"    console.log(`✅ Repair estimate: ${responseJson.repairCost} cost, +${responseJson.gainedHitPoints} HP`);",
+									"    console.log(`Repair estimate: ${responseJson.repairCost} cost, +${responseJson.gainedHitPoints} HP`);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -589,7 +589,7 @@
 									"    pm.expect(responseJson.hitPoints).to.equal(responseJson.maxHitPoints);",
 									"});",
 									"",
-									"console.log('✅ Weapon repaired successfully to full health');"
+									"console.log('Weapon repaired successfully to full health');"
 								],
 								"type": "text/javascript"
 							}
@@ -647,7 +647,7 @@
 									"if (pm.response.code === 201) {",
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('customWeaponId', responseJson.id);",
-									"    console.log(`✅ Custom weapon created: ${responseJson.name} (ID: ${responseJson.id})`);",
+									"    console.log(`Custom weapon created: ${responseJson.name} (ID: ${responseJson.id})`);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -699,7 +699,7 @@
 									"    pm.expect(pm.response.text()).to.be.empty;",
 									"});",
 									"",
-									"console.log('✅ Random weapon deleted successfully');"
+									"console.log('Random weapon deleted successfully');"
 								],
 								"type": "text/javascript"
 							}
@@ -743,7 +743,7 @@
 									"    pm.expect(pm.response.text()).to.be.empty;",
 									"});",
 									"",
-									"console.log('✅ Custom weapon deleted successfully');"
+									"console.log('Custom weapon deleted successfully');"
 								],
 								"type": "text/javascript"
 							}
@@ -830,7 +830,7 @@
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('integration_access_token', responseJson.accessToken);",
 									"    pm.environment.set('integration_user_id', responseJson.user.id);",
-									"    console.log('✅ Integration test user registered');",
+									"    console.log('Integration test user registered');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -879,7 +879,7 @@
 									"    pm.expect(responseJson.id).to.equal(pm.environment.get('integration_user_id'));",
 									"});",
 									"",
-									"console.log('✅ Integration user profile verified');"
+									"console.log('Integration user profile verified');"
 								],
 								"type": "text/javascript"
 							}
@@ -923,7 +923,7 @@
 									"    const responseJson = pm.response.json();",
 									"    pm.environment.set('integration_weapon_id', responseJson.id);",
 									"    pm.environment.set('integration_weapon_max_hp', responseJson.maxHitPoints);",
-									"    console.log(`✅ Integration weapon created: ${responseJson.name}`);",
+									"    console.log(`Integration weapon created: ${responseJson.name}`);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -968,7 +968,7 @@
 									"    pm.expect(responseJson.hitPoints).to.be.lessThan(responseJson.maxHitPoints);",
 									"});",
 									"",
-									"console.log('✅ Integration weapon damaged for testing');"
+									"console.log('Integration weapon damaged for testing');"
 								],
 								"type": "text/javascript"
 							}
@@ -1021,7 +1021,7 @@
 									"    pm.expect(responseJson.hitPoints).to.be.lessThan(responseJson.maxHitPoints);",
 									"});",
 									"",
-									"console.log('✅ Integration weapon state verified');"
+									"console.log('Integration weapon state verified');"
 								],
 								"type": "text/javascript"
 							}
@@ -1066,7 +1066,7 @@
 									"    pm.expect(responseJson.gainedHitPoints).to.be.greaterThan(0);",
 									"});",
 									"",
-									"console.log('✅ Integration repair estimate completed');"
+									"console.log('Integration repair estimate completed');"
 								],
 								"type": "text/javascript"
 							}
@@ -1118,7 +1118,7 @@
 									"    pm.expect(responseJson.hitPoints).to.equal(responseJson.maxHitPoints);",
 									"});",
 									"",
-									"console.log('✅ Integration weapon repaired');"
+									"console.log('Integration weapon repaired');"
 								],
 								"type": "text/javascript"
 							}
@@ -1164,7 +1164,7 @@
 									"    pm.expect(responseJson.id).to.equal(pm.environment.get('integration_weapon_id'));",
 									"});",
 									"",
-									"console.log('✅ Integration test scenario completed successfully');"
+									"console.log('Integration test scenario completed successfully');"
 								],
 								"type": "text/javascript"
 							}
@@ -1209,7 +1209,7 @@
 									"    pm.response.to.have.status(401);",
 									"});",
 									"",
-									"console.log('✅ Invalid authentication properly handled');"
+									"console.log('Invalid authentication properly handled');"
 								],
 								"type": "text/javascript"
 							}
@@ -1253,7 +1253,7 @@
 									"    pm.expect(responseJson).to.have.property('message');",
 									"});",
 									"",
-									"console.log('✅ Non-existent weapon properly handled with security feature');"
+									"console.log('Non-existent weapon properly handled with security feature');"
 								],
 								"type": "text/javascript"
 							}
@@ -1297,7 +1297,7 @@
 									"    pm.expect(responseJson).to.have.property('message');",
 									"});",
 									"",
-									"console.log('✅ Invalid login credentials properly handled');"
+									"console.log('Invalid login credentials properly handled');"
 								],
 								"type": "text/javascript"
 							}
@@ -1347,7 +1347,7 @@
 									"    pm.expect(hasErrors).to.be.true;",
 									"});",
 									"",
-									"console.log('✅ Invalid weapon creation properly handled');"
+									"console.log('Invalid weapon creation properly handled');"
 								],
 								"type": "text/javascript"
 							}
@@ -1400,7 +1400,7 @@
 									"    pm.response.to.have.status(404);",
 									"});",
 									"",
-									"console.log('✅ Custom weapon cleanup verified (already deleted)');"
+									"console.log('Custom weapon cleanup verified (already deleted)');"
 								],
 								"type": "text/javascript"
 							}
@@ -1439,7 +1439,7 @@
 									"    pm.response.to.have.status(204);",
 									"});",
 									"",
-									"console.log('✅ Test weapon cleaned up successfully');"
+									"console.log('Test weapon cleaned up successfully');"
 								],
 								"type": "text/javascript"
 							}
@@ -1479,7 +1479,7 @@
 									"    pm.response.to.have.status(404);",
 									"});",
 									"",
-									"console.log('✅ Integration weapon cleanup verified (already deleted)');"
+									"console.log('Integration weapon cleanup verified (already deleted)');"
 								],
 								"type": "text/javascript"
 							}
@@ -1518,7 +1518,7 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"console.log('✅ Main user logged out successfully');"
+									"console.log('Main user logged out successfully');"
 								],
 								"type": "text/javascript"
 							}
@@ -1557,8 +1557,8 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"console.log('✅ Integration user logged out successfully');",
-									"console.log('🎉 All cleanup operations completed!');"
+									"console.log('Integration user logged out successfully');",
+									"console.log('All cleanup operations completed!');"
 								],
 								"type": "text/javascript"
 							}
@@ -1600,11 +1600,11 @@
 					"// Set default base URL if not already set",
 					"if (!pm.environment.get('base_url')) {",
 					"    pm.environment.set('base_url', 'https://localhost:5001');",
-					"    console.log('📝 Set default base URL to https://localhost:5001');",
+					"    console.log('Set default base URL to https://localhost:5001');",
 					"}",
 					"",
 					"// Log current request for debugging",
-					"console.log(`🚀 Executing: ${pm.request.method} ${pm.request.url}`);"
+					"console.log(`Executing: ${pm.request.method} ${pm.request.url}`);"
 				]
 			}
 		},
@@ -1615,7 +1615,7 @@
 				"exec": [
 					"// Global test script",
 					"// Log response status and time",
-					"console.log(`📊 Response: ${pm.response.status} ${pm.response.code} (${pm.response.responseTime}ms)`);",
+					"console.log(`Response: ${pm.response.status} ${pm.response.code} (${pm.response.responseTime}ms)`);",
 					"",
 					"// Basic response validation",
 					"pm.test('Response time is reasonable', function () {",

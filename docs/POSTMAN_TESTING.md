@@ -1,8 +1,8 @@
-# 🧪 API Testing with Postman
+# API Testing with Postman
 
 This document explains how to use the comprehensive Postman testing collection for the Weapon API.
 
-## 📁 Testing Resources
+## Testing Resources
 
 All Postman testing resources are located in the `/postman` directory:
 
@@ -14,7 +14,7 @@ postman/
 └── setup.sh                                               # Automated setup script
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Option 1: Automated Setup (Recommended)
 
@@ -24,10 +24,10 @@ postman/
 ```
 
 This script will:
-- ✅ Check prerequisites (Docker, .NET)
-- ✅ Start PostgreSQL database
-- ✅ Build and start the Weapon API
-- ✅ Provide Postman import instructions
+- Check prerequisites (Docker, .NET)
+- Start PostgreSQL database
+- Build and start the Weapon API
+- Provide Postman import instructions
 
 ### Option 2: Manual Setup
 
@@ -42,42 +42,42 @@ This script will:
    - Import `postman/WeaponAPI-Testing.postman_environment.json`
    - Select "Weapon API Testing" environment
 
-## 📋 Test Collection Overview
+## Test Collection Overview
 
 The collection includes **35 requests** across **6 folders**:
 
-### 🔐 Authentication Tests (4 requests)
+### Authentication Tests (4 requests)
 - User registration and login
 - Profile access and JWT token management
 - Token refresh functionality
 
-### ⚔️ Weapons CRUD Tests (4 requests)
+### Weapons CRUD Tests (4 requests)
 - Create random and custom weapons
 - Retrieve all weapons and individual weapons
 - Basic CRUD operation validation
 
-### 🛠️ Weapons Advanced Operations (6 requests)
+### Weapons Advanced Operations (6 requests)
 - Weapon damage application
 - Repair cost estimation
 - Weapon repair functionality
 - State persistence verification
 
-### 🔄 Integration Test Scenario (8 requests)
+### Integration Test Scenario (8 requests)
 Complete end-to-end user journey:
 - Register user → Get profile → Create weapon → Damage → Repair → Verify
 
-### ❌ Error Handling Tests (4 requests)
+### Error Handling Tests (4 requests)
 - Invalid authentication scenarios
 - Non-existent resource handling
 - Input validation testing
 - Proper error response verification
 
-### 🧹 Cleanup Operations (5 requests)
+### Cleanup Operations (5 requests)
 - Remove test weapons
 - User logout operations
 - Environment cleanup
 
-## 🎯 Key Testing Features
+## Key Testing Features
 
 ### Automated Test Data Management
 - **Dynamic User Creation**: Random usernames and emails
@@ -98,18 +98,18 @@ Complete end-to-end user journey:
 - Cross-request data persistence
 - Error condition handling
 
-## 📊 Expected Test Results
+## Expected Test Results
 
-**Successful Test Run**: 31/31 tests passing ✅
+**Successful Test Run**: 31/31 tests passing
 
-- Authentication: 4/4 ✅
-- CRUD Operations: 4/4 ✅
-- Advanced Operations: 6/6 ✅
-- Integration Scenario: 8/8 ✅
-- Error Handling: 4/4 ✅
-- Cleanup: 5/5 ✅
+- Authentication: 4/4
+- CRUD Operations: 4/4
+- Advanced Operations: 6/6
+- Integration Scenario: 8/8
+- Error Handling: 4/4
+- Cleanup: 5/5
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -132,7 +132,7 @@ Update `base_url` for different environments:
 - Custom Port: `https://localhost:YOUR_PORT`
 - HTTP: `http://localhost:5000`
 
-## 🚦 Execution Strategies
+## Execution Strategies
 
 ### 1. Sequential Folder Execution (Recommended)
 Run folders in order for complete test coverage:
@@ -154,7 +154,7 @@ Target specific endpoints for focused testing:
 - Ensure authentication tests run first
 - Use environment variables from previous requests
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -189,28 +189,28 @@ All requests include comprehensive logging:
 - Environment variable tracking
 - Console output for debugging
 
-## 📈 Test Coverage
+## Test Coverage
 
 The collection provides **100% API endpoint coverage**:
 
 **Authentication Endpoints (5)**:
-- ✅ POST `/api/auth/register`
-- ✅ POST `/api/auth/login`
-- ✅ GET `/api/auth/profile`
-- ✅ POST `/api/auth/refresh`
-- ✅ POST `/api/auth/logout`
+- POST `/api/auth/register`
+- POST `/api/auth/login`
+- GET `/api/auth/profile`
+- POST `/api/auth/refresh`
+- POST `/api/auth/logout`
 
 **Weapon Management Endpoints (8)**:
-- ✅ GET `/api/weapons`
-- ✅ POST `/api/weapons`
-- ✅ GET `/api/weapons/{id}`
-- ✅ DELETE `/api/weapons/{id}`
-- ✅ GET `/api/weapons/create-random`
-- ✅ POST `/api/weapons/{id}/damage`
-- ✅ POST `/api/weapons/{id}/repair`
-- ✅ POST `/api/weapons/estimate-repair`
+- GET `/api/weapons`
+- POST `/api/weapons`
+- GET `/api/weapons/{id}`
+- DELETE `/api/weapons/{id}`
+- GET `/api/weapons/create-random`
+- POST `/api/weapons/{id}/damage`
+- POST `/api/weapons/{id}/repair`
+- POST `/api/weapons/estimate-repair`
 
-## 🎉 Benefits
+## Benefits
 
 ### For Developers
 - **Rapid Testing**: Complete API validation in minutes
@@ -230,7 +230,7 @@ The collection provides **100% API endpoint coverage**:
 - **Monitoring**: Ongoing API health checks
 - **Documentation**: Self-documenting API behavior
 
-## 📚 Additional Resources
+## Additional Resources
 
 - **Detailed Documentation**: See `postman/README.md`
 - **Setup Script**: Use `postman/setup.sh` for automation
@@ -239,7 +239,7 @@ The collection provides **100% API endpoint coverage**:
 
 ---
 
-## 🚀 Ready to Test!
+## Ready to Test
 
 Your comprehensive Postman testing environment is ready. Choose your preferred execution method and start validating your Weapon API!
 

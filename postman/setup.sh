@@ -5,7 +5,7 @@
 
 set -e  # Exit on any error
 
-echo "🚀 Weapon API - Postman Testing Setup"
+echo "Weapon API - Postman Testing Setup"
 echo "====================================="
 echo
 
@@ -140,7 +140,7 @@ start_api() {
 # Display Postman import instructions
 show_postman_instructions() {
     echo
-    echo "📋 Postman Import Instructions"
+    echo "Postman Import Instructions"
     echo "=============================="
     echo
     echo "1. Open Postman application"
@@ -167,7 +167,7 @@ show_postman_instructions() {
 # Display API endpoints
 show_api_info() {
     echo
-    echo "🔗 API Information"
+    echo "API Information"
     echo "=================="
     echo
     echo "API Base URL: http://localhost:5297"
@@ -197,7 +197,7 @@ show_api_info() {
 # Display cleanup instructions
 show_cleanup_instructions() {
     echo
-    echo "🧹 Cleanup Instructions"
+    echo "Cleanup Instructions"
     echo "======================="
     echo
     echo "When finished testing:"
@@ -248,7 +248,7 @@ main() {
     show_cleanup_instructions
 
     echo
-    echo "🎉 Your Weapon API testing environment is ready!"
+    echo "Your Weapon API testing environment is ready!"
     echo
     echo "API Log: $(pwd)/api.log"
     echo "API PID: $(cat api.pid 2>/dev/null || echo 'Not available')"
