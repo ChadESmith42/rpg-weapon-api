@@ -206,10 +206,32 @@ dotnet publish WeaponApi.Api -c Release -o publish
 
 ### Docker Support
 
+#### Local Development
 ```bash
 # Build and run with Docker Compose
 docker-compose up --build
 ```
+
+#### Docker Image for DockerHub
+```bash
+# Build and tag for DockerHub (replace 'yourusername')
+./docker-build.sh yourusername v1.0.0
+
+# Test locally
+docker run -p 8080:8080 yourusername/weapon-api:v1.0.0
+
+# Push to DockerHub
+./docker-push.sh yourusername v1.0.0
+```
+
+#### Using Published Image
+```bash
+# Pull and run from DockerHub
+docker pull yourusername/weapon-api:latest
+docker run -p 8080:8080 yourusername/weapon-api:latest
+```
+
+**Detailed Docker Guide**: [docs/DOCKER_DEPLOYMENT.md](docs/DOCKER_DEPLOYMENT.md)
 
 ## Configuration
 
@@ -243,6 +265,7 @@ docker-compose up --build
 
 - **Setup Instructions**: [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md)
 - **API Testing Guide**: [docs/POSTMAN_TESTING.md](docs/POSTMAN_TESTING.md)
+- **Docker Deployment**: [docs/DOCKER_DEPLOYMENT.md](docs/DOCKER_DEPLOYMENT.md)
 - **Architecture Guidelines**: [.github/instructions/](.\github\instructions\)
 - **API Documentation**: Available at `/swagger` when running
 
